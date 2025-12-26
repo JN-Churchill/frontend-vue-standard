@@ -44,6 +44,17 @@
         </el-form-item>
 
         <el-form-item
+          label="排序"
+          prop="sort"
+        >
+          <el-input-number
+            v-model="form.sort"
+            :min="0"
+          />
+        </el-form-item>
+
+        <el-form-item
+          v-if="isEdit"
           :label="t('demo.status')"
           prop="status"
         >
@@ -80,7 +91,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { FormInstance, FormRules } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
-import { demoApi, type DemoItem } from '@/api/modules/demo'
+import { demoApi } from '@/api/modules/demo'
+import type { DemoDto, DemoInput, DemoUpdateInput } from '@/types/demo'
 import { useMessage } from '@/hooks'
 
 const { t } = useI18n()
@@ -92,9 +104,10 @@ const formRef = ref<FormInstance>()
 const loading = ref(false)
 const isEdit = computed(() => !!route.params.id)
 
-const form = reactive<Partial<DemoItem>>({
+const form = reactive<Partial<DemoInput & DemoUpdateInput>>({
   name: '',
   description: '',
+  sort: 0,
   status: 1,
 })
 
@@ -117,7 +130,7 @@ const loadDetail = async () => {
 
   loading.value = true
   try {
-    const response = await demoApi.getDetail(route.params.id as string)
+    const response = await demoApi.getDetail(Number(route.params.id))
     Object.assign(form, response.data)
   } catch (err) {
     error('Failed to load data')
@@ -136,9 +149,20 @@ const handleSubmit = async () => {
     loading.value = true
     try {
       if (isEdit.value) {
-        await demoApi.update(route.params.id as string, form)
+        const updateData: DemoUpdateInput = {
+          name: form.name!,
+          description: form.description!,
+          status: form.status!,
+          sort: form.sort!,
+        }
+        await demoApi.update(Number(route.params.id), updateData)
       } else {
-        await demoApi.create(form)
+        const createData: DemoInput = {
+          name: form.name!,
+          description: form.description!,
+          sort: form.sort!,
+        }
+        await demoApi.create(createData)
       }
       
       success(t('demo.saveSuccess'))
