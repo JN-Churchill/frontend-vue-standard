@@ -4,7 +4,10 @@
       <template #header>
         <div class="card-header">
           <span>{{ isEdit ? t('demo.editDemo') : t('demo.addDemo') }}</span>
-          <el-button link @click="goBack">
+          <el-button
+            link
+            @click="goBack"
+          >
             <el-icon><ArrowLeft /></el-icon>
             {{ t('common.back') }}
           </el-button>
@@ -18,11 +21,20 @@
         label-width="120px"
         style="max-width: 600px"
       >
-        <el-form-item :label="t('demo.name')" prop="name">
-          <el-input v-model="form.name" :placeholder="t('common.pleaseEnter')" />
+        <el-form-item
+          :label="t('demo.name')"
+          prop="name"
+        >
+          <el-input
+            v-model="form.name"
+            :placeholder="t('common.pleaseEnter')"
+          />
         </el-form-item>
 
-        <el-form-item :label="t('demo.description')" prop="description">
+        <el-form-item
+          :label="t('demo.description')"
+          prop="description"
+        >
           <el-input
             v-model="form.description"
             type="textarea"
@@ -31,15 +43,26 @@
           />
         </el-form-item>
 
-        <el-form-item :label="t('demo.status')" prop="status">
+        <el-form-item
+          :label="t('demo.status')"
+          prop="status"
+        >
           <el-radio-group v-model="form.status">
-            <el-radio :label="1">Active</el-radio>
-            <el-radio :label="0">Inactive</el-radio>
+            <el-radio :label="1">
+              Active
+            </el-radio>
+            <el-radio :label="0">
+              Inactive
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="handleSubmit">
+          <el-button
+            type="primary"
+            :loading="loading"
+            @click="handleSubmit"
+          >
             {{ t('common.submit') }}
           </el-button>
           <el-button @click="handleReset">

@@ -1,34 +1,14 @@
 import { get, post, put, del } from '../index'
-
-/**
- * User login interface
- */
-export interface LoginParams {
-  username: string
-  password: string
-}
-
-/**
- * Login response
- */
-export interface LoginResponse {
-  token: string
-  refreshToken: string
-  userInfo: UserInfo
-}
-
-/**
- * User info interface
- */
-export interface UserInfo {
-  id: string
-  username: string
-  nickname: string
-  email: string
-  avatar?: string
-  roles: string[]
-  permissions: string[]
-}
+import type { PagedResult, PageRequest, BatchDeleteRequest } from '@/types/api'
+import type {
+  UserDto,
+  UserInput,
+  UserUpdateInput,
+  LoginInput,
+  LoginOutput,
+  RefreshTokenInput,
+  RefreshTokenOutput,
+} from '@/types/user'
 
 /**
  * User API module
@@ -36,43 +16,66 @@ export interface UserInfo {
 export const userApi = {
   /**
    * User login
+   * @param data - Login credentials
    */
-  login(data: LoginParams) {
-    return post<LoginResponse>('/auth/login', data)
-  },
-
-  /**
-   * User logout
-   */
-  logout() {
-    return post('/auth/logout')
+  login(data: LoginInput) {
+    return post<LoginOutput>('/User/login', data)
   },
 
   /**
    * Refresh access token
+   * @param data - Refresh token data
    */
-  refreshToken(refreshToken: string) {
-    return post<{ token: string; refreshToken: string }>('/auth/refresh', { refreshToken })
+  refreshToken(data: RefreshTokenInput) {
+    return post<RefreshTokenOutput>('/User/refresh-token', data)
   },
 
   /**
-   * Get current user info
+   * Get user list with pagination
+   * @param params - Pagination parameters
    */
-  getUserInfo() {
-    return get<UserInfo>('/user/info')
+  getPage(params: PageRequest) {
+    return get<PagedResult<UserDto>>('/User/page', params)
   },
 
   /**
-   * Update user info
+   * Get user detail by id
+   * @param id - User id
    */
-  updateUserInfo(data: Partial<UserInfo>) {
-    return put<UserInfo>('/user/info', data)
+  getDetail(id: number) {
+    return get<UserDto>(`/User/${id}`)
   },
 
   /**
-   * Change password
+   * Create user
+   * @param data - User creation data
    */
-  changePassword(data: { oldPassword: string; newPassword: string }) {
-    return post('/user/password', data)
+  create(data: UserInput) {
+    return post<UserDto>('/User', data)
+  },
+
+  /**
+   * Update user
+   * @param id - User id
+   * @param data - User update data
+   */
+  update(id: number, data: UserUpdateInput) {
+    return put<UserDto>(`/User/${id}`, data)
+  },
+
+  /**
+   * Delete user
+   * @param id - User id
+   */
+  delete(id: number) {
+    return del(`/User/${id}`)
+  },
+
+  /**
+   * Batch delete users
+   * @param data - Batch delete request with user ids
+   */
+  batchDelete(data: BatchDeleteRequest) {
+    return del('/User/batch', data)
   },
 }

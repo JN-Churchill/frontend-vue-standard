@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { userApi, type LoginParams, type UserInfo } from '@/api/modules/user'
-import { setStorage, getStorage, removeStorage } from '@/utils/storage'
+import { userApi } from '@/api/modules/user'
+import type { LoginInput, UserDto } from '@/types/user'
+import { removeStorage } from '@/utils/storage'
 import { logger } from '@/utils/logger'
 
 /**
@@ -13,7 +14,8 @@ export const useUserStore = defineStore(
     // State
     const token = ref<string>('')
     const refreshToken = ref<string>('')
-    const userInfo = ref<UserInfo | null>(null)
+    const expiredTime = ref<number>(0)
+    const userInfo = ref<UserDto | null>(null)
     const permissions = ref<string[]>([])
     const roles = ref<string[]>([])
 
@@ -32,24 +34,30 @@ export const useUserStore = defineStore(
     }
 
     /**
+     * Set expired time
+     */
+    const setExpiredTime = (time: number) => {
+      expiredTime.value = time
+    }
+
+    /**
      * Set user info
      */
-    const setUserInfo = (info: UserInfo) => {
+    const setUserInfo = (info: UserDto) => {
       userInfo.value = info
-      permissions.value = info.permissions || []
-      roles.value = info.roles || []
     }
 
     /**
      * User login
      */
-    const login = async (loginParams: LoginParams) => {
+    const login = async (loginParams: LoginInput) => {
       try {
         const response = await userApi.login(loginParams)
-        const { token: accessToken, refreshToken: refresh, userInfo: info } = response.data
+        const { accessToken, refreshToken: refresh, expiredTime: expired, userInfo: info } = response.data
 
         setToken(accessToken)
         setRefreshToken(refresh)
+        setExpiredTime(expired)
         setUserInfo(info)
 
         logger.info('User logged in successfully', info)
@@ -65,13 +73,10 @@ export const useUserStore = defineStore(
      */
     const logout = async () => {
       try {
-        await userApi.logout()
-      } catch (error) {
-        logger.error('Logout error', error)
-      } finally {
         // Clear all state
         token.value = ''
         refreshToken.value = ''
+        expiredTime.value = 0
         userInfo.value = null
         permissions.value = []
         roles.value = []
@@ -80,6 +85,8 @@ export const useUserStore = defineStore(
         removeStorage('user')
         
         logger.info('User logged out')
+      } catch (error) {
+        logger.error('Logout error', error)
       }
     }
 
@@ -92,11 +99,15 @@ export const useUserStore = defineStore(
       }
 
       try {
-        const response = await userApi.refreshToken(refreshToken.value)
-        const { token: newToken, refreshToken: newRefreshToken } = response.data
+        const response = await userApi.refreshToken({
+          refreshToken: refreshToken.value,
+          accessToken: token.value,
+        })
+        const { accessToken: newToken, refreshToken: newRefreshToken, expiredTime: expired } = response.data
 
         setToken(newToken)
         setRefreshToken(newRefreshToken)
+        setExpiredTime(expired)
 
         logger.info('Token refreshed successfully')
         return response
@@ -104,20 +115,6 @@ export const useUserStore = defineStore(
         logger.error('Token refresh failed', error)
         // Clear tokens on refresh failure
         await logout()
-        throw error
-      }
-    }
-
-    /**
-     * Get user info from server
-     */
-    const getUserInfo = async () => {
-      try {
-        const response = await userApi.getUserInfo()
-        setUserInfo(response.data)
-        return response
-      } catch (error) {
-        logger.error('Failed to get user info', error)
         throw error
       }
     }
@@ -147,6 +144,7 @@ export const useUserStore = defineStore(
       // State
       token,
       refreshToken,
+      expiredTime,
       userInfo,
       permissions,
       roles,
@@ -154,11 +152,11 @@ export const useUserStore = defineStore(
       // Actions
       setToken,
       setRefreshToken,
+      setExpiredTime,
       setUserInfo,
       login,
       logout,
       refreshAccessToken,
-      getUserInfo,
       hasPermission,
       hasRole,
       hasAnyRole,
@@ -168,7 +166,7 @@ export const useUserStore = defineStore(
     persist: {
       key: 'user',
       storage: localStorage,
-      paths: ['token', 'refreshToken', 'userInfo', 'permissions', 'roles'],
+      paths: ['token', 'refreshToken', 'expiredTime', 'userInfo', 'permissions', 'roles'],
     },
   }
 )

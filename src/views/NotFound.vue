@@ -3,7 +3,12 @@
     <div class="not-found-content">
       <h1>404</h1>
       <p>Page Not Found</p>
-      <el-button type="primary" @click="goHome">Back to Home</el-button>
+      <el-button
+        type="primary"
+        @click="goHome"
+      >
+        Back to Home
+      </el-button>
     </div>
   </div>
 </template>

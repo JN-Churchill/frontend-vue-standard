@@ -1,72 +1,57 @@
 import { get, post, put, del } from '../index'
-
-/**
- * Demo item interface
- */
-export interface DemoItem {
-  id: string
-  name: string
-  description: string
-  status: number
-  createTime: string
-  updateTime: string
-}
-
-/**
- * Pagination params
- */
-export interface PaginationParams {
-  page: number
-  pageSize: number
-  keyword?: string
-}
-
-/**
- * Pagination response
- */
-export interface PaginationResponse<T> {
-  list: T[]
-  total: number
-  page: number
-  pageSize: number
-}
+import type { PagedResult, PageRequest, BatchDeleteRequest } from '@/types/api'
+import type { DemoDto, DemoInput, DemoUpdateInput } from '@/types/demo'
 
 /**
  * Demo API module
  */
 export const demoApi = {
   /**
-   * Get demo list
+   * Get demo list with pagination
+   * @param params - Pagination parameters
    */
-  getList(params: PaginationParams) {
-    return get<PaginationResponse<DemoItem>>('/demo/list', params)
+  getPage(params: PageRequest) {
+    return get<PagedResult<DemoDto>>('/Demo/page', params)
   },
 
   /**
-   * Get demo detail
+   * Get demo detail by id
+   * @param id - Demo id
    */
-  getDetail(id: string) {
-    return get<DemoItem>(`/demo/${id}`)
+  getDetail(id: number) {
+    return get<DemoDto>(`/Demo/${id}`)
   },
 
   /**
    * Create demo
+   * @param data - Demo creation data
    */
-  create(data: Partial<DemoItem>) {
-    return post<DemoItem>('/demo', data)
+  create(data: DemoInput) {
+    return post<DemoDto>('/Demo', data)
   },
 
   /**
    * Update demo
+   * @param id - Demo id
+   * @param data - Demo update data
    */
-  update(id: string, data: Partial<DemoItem>) {
-    return put<DemoItem>(`/demo/${id}`, data)
+  update(id: number, data: DemoUpdateInput) {
+    return put<DemoDto>(`/Demo/${id}`, data)
   },
 
   /**
    * Delete demo
+   * @param id - Demo id
    */
-  delete(id: string) {
-    return del(`/demo/${id}`)
+  delete(id: number) {
+    return del(`/Demo/${id}`)
+  },
+
+  /**
+   * Batch delete demos
+   * @param data - Batch delete request with demo ids
+   */
+  batchDelete(data: BatchDeleteRequest) {
+    return del('/Demo/batch', data)
   },
 }

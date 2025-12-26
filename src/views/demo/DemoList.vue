@@ -4,7 +4,10 @@
       <template #header>
         <div class="card-header">
           <span>{{ t('demo.list') }}</span>
-          <el-button type="primary" @click="handleAdd">
+          <el-button
+            type="primary"
+            @click="handleAdd"
+          >
             <el-icon><Plus /></el-icon>
             {{ t('demo.addDemo') }}
           </el-button>
@@ -12,7 +15,11 @@
       </template>
 
       <!-- Search form -->
-      <el-form :inline="true" :model="searchForm" class="search-form">
+      <el-form
+        :inline="true"
+        :model="searchForm"
+        class="search-form"
+      >
         <el-form-item :label="t('demo.name')">
           <el-input
             v-model="searchForm.keyword"
@@ -22,7 +29,10 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">
+          <el-button
+            type="primary"
+            @click="handleSearch"
+          >
             <el-icon><Search /></el-icon>
             {{ t('common.search') }}
           </el-button>
@@ -41,28 +51,58 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="id" label="ID" width="100" />
-        <el-table-column prop="name" :label="t('demo.name')" />
-        <el-table-column prop="description" :label="t('demo.description')" />
-        <el-table-column prop="status" :label="t('demo.status')" width="100">
+        <el-table-column
+          prop="id"
+          label="ID"
+          width="100"
+        />
+        <el-table-column
+          prop="name"
+          :label="t('demo.name')"
+        />
+        <el-table-column
+          prop="description"
+          :label="t('demo.description')"
+        />
+        <el-table-column
+          prop="status"
+          :label="t('demo.status')"
+          width="100"
+        >
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'">
               {{ row.status === 1 ? 'Active' : 'Inactive' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" :label="t('demo.createTime')" width="180">
+        <el-table-column
+          prop="createTime"
+          :label="t('demo.createTime')"
+          width="180"
+        >
           <template #default="{ row }">
             {{ dateFormat(row.createTime) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('demo.operations')" width="200" fixed="right">
+        <el-table-column
+          :label="t('demo.operations')"
+          width="200"
+          fixed="right"
+        >
           <template #default="{ row }">
-            <el-button type="primary" link @click="handleEdit(row)">
+            <el-button
+              type="primary"
+              link
+              @click="handleEdit(row)"
+            >
               <el-icon><Edit /></el-icon>
               {{ t('common.edit') }}
             </el-button>
-            <el-button type="danger" link @click="handleDelete(row)">
+            <el-button
+              type="danger"
+              link
+              @click="handleDelete(row)"
+            >
               <el-icon><Delete /></el-icon>
               {{ t('common.delete') }}
             </el-button>
