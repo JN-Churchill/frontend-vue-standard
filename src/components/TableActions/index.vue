@@ -27,7 +27,7 @@
     >
       删除
     </el-button>
-    <slot :row="row"></slot>
+    <slot :row="row" />
   </div>
 </template>
 

@@ -1,5 +1,8 @@
 <template>
-  <el-tag :type="tagType" :effect="effect">
+  <el-tag
+    :type="tagType"
+    :effect="effect"
+  >
     {{ statusText }}
   </el-tag>
 </template>
