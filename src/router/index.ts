@@ -6,6 +6,7 @@ import 'nprogress/nprogress.css'
 
 // Import route modules
 import demoRoutes from './modules/demo'
+import systemRoutes from './modules/system'
 
 /**
  * Constant routes that don't require authentication
@@ -31,6 +32,7 @@ const constantRoutes: RouteRecordRaw[] = [
  */
 const asyncRoutes: RouteRecordRaw[] = [
   ...demoRoutes,
+  ...systemRoutes,
   {
     path: '/404',
     name: 'NotFound',

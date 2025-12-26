@@ -2,10 +2,17 @@
   <div class="layout-container">
     <el-container>
       <!-- Sidebar -->
-      <el-aside :width="collapsed ? '64px' : '200px'" class="layout-aside">
+      <el-aside
+        :width="collapsed ? '64px' : '200px'"
+        class="layout-aside"
+      >
         <div class="logo">
-          <h1 v-if="!collapsed">Vue 3</h1>
-          <h1 v-else>V3</h1>
+          <h1 v-if="!collapsed">
+            Vue 3
+          </h1>
+          <h1 v-else>
+            V3
+          </h1>
         </div>
         <el-menu
           :default-active="activeMenu"
@@ -15,8 +22,14 @@
           text-color="#bfcbd9"
           active-text-color="#409eff"
         >
-          <template v-for="route in menuRoutes" :key="route.path">
-            <el-sub-menu v-if="route.children && route.children.length > 0" :index="route.path">
+          <template
+            v-for="route in menuRoutes"
+            :key="route.path"
+          >
+            <el-sub-menu
+              v-if="route.children && route.children.length > 0"
+              :index="route.path"
+            >
               <template #title>
                 <el-icon v-if="route.meta?.icon">
                   <component :is="route.meta.icon" />
@@ -34,7 +47,10 @@
                 <span>{{ child.meta?.title }}</span>
               </el-menu-item>
             </el-sub-menu>
-            <el-menu-item v-else :index="route.path">
+            <el-menu-item
+              v-else
+              :index="route.path"
+            >
               <el-icon v-if="route.meta?.icon">
                 <component :is="route.meta.icon" />
               </el-icon>
@@ -49,7 +65,10 @@
         <!-- Header -->
         <el-header class="layout-header">
           <div class="header-left">
-            <el-icon class="toggle-icon" @click="toggleCollapse">
+            <el-icon
+              class="toggle-icon"
+              @click="toggleCollapse"
+            >
               <Expand v-if="collapsed" />
               <Fold v-else />
             </el-icon>
@@ -57,16 +76,28 @@
           <div class="header-right">
             <el-dropdown @command="handleCommand">
               <span class="user-info">
-                <el-avatar :size="32" :src="userInfo?.avatar">
+                <el-avatar
+                  :size="32"
+                  :src="userInfo?.avatar"
+                >
                   {{ userInfo?.nickname?.charAt(0) }}
                 </el-avatar>
                 <span class="username">{{ userInfo?.nickname || userInfo?.username }}</span>
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="profile">个人中心</el-dropdown-item>
-                  <el-dropdown-item command="settings">设置</el-dropdown-item>
-                  <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
+                  <el-dropdown-item command="profile">
+                    个人中心
+                  </el-dropdown-item>
+                  <el-dropdown-item command="settings">
+                    设置
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    divided
+                    command="logout"
+                  >
+                    退出登录
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -76,7 +107,10 @@
         <!-- Main -->
         <el-main class="layout-main">
           <router-view v-slot="{ Component }">
-            <transition name="fade" mode="out-in">
+            <transition
+              name="fade"
+              mode="out-in"
+            >
               <component :is="Component" />
             </transition>
           </router-view>

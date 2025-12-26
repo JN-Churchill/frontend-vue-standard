@@ -5,6 +5,7 @@ import pinia from './store'
 import { setupElementPlus } from './plugins/element-plus'
 import { setupI18n } from './plugins/i18n'
 import { setupValidation } from './utils/validation'
+import { setupPermissionDirective } from './directives/permission'
 import { logger } from './utils/logger'
 
 /**
@@ -18,6 +19,7 @@ const app = createApp(App)
 setupElementPlus(app)
 setupI18n(app)
 setupValidation()
+setupPermissionDirective(app)
 
 /**
  * Use router and store
