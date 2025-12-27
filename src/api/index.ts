@@ -58,21 +58,35 @@ instance.interceptors.request.use(
  * Handle token refresh and error responses
  */
 instance.interceptors.response.use(
-  (response: AxiosResponse<ApiResponse>) => {
+  (response: AxiosResponse) => {
     NProgress.done()
     
-    const { code, message, success } = response.data
+    const responseData = response.data
     
-    logger.info(`API Response: ${response.config.url}`, response.data)
+    logger.info(`API Response: ${response.config.url}`, responseData)
     
-    // Handle successful response
-    if (success || code === 200) {
-      return response.data
+    // 如果响应有 success 字段，使用标准格式
+    if ('success' in responseData) {
+      const { code, message, success } = responseData
+      
+      if (success || code === 200) {
+        return response
+      }
+      
+      // Handle business logic errors
+      ElMessage.error(message || 'Request failed')
+      return Promise.reject(new Error(message || 'Request failed'))
     }
     
-    // Handle business logic errors
-    ElMessage.error(message || 'Request failed')
-    return Promise.reject(new Error(message || 'Request failed'))
+    // 如果没有 success 字段，说明后端直接返回数据，包装成标准格式
+    response.data = {
+      code: 200,
+      success: true,
+      data: responseData,
+      message: 'success',
+    } as ApiResponse
+    
+    return response
   },
   async (error: AxiosError<ApiResponse>) => {
     NProgress.done()

@@ -91,7 +91,7 @@ const handleLogin = async () => {
     loading.value = true
     try {
       await userStore.login({
-        username: loginForm.username,
+        userName: loginForm.username,
         password: loginForm.password,
       })
 
